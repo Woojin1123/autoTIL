@@ -16,19 +16,23 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // oauth2.0 로그인이 성공할 경우 응답
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
         Long userId = customOAuth2User.getId();
-        String username = String.valueOf(Long.valueOf(customOAuth2User.getName()));
+        String username = String.valueOf((customOAuth2User.getName()));
 
         String accessToken = jwtUtil.createToken(username, Role.ROLE_USER.name(), false);
         String refreshToken = jwtUtil.createToken(username, Role.ROLE_USER.name(), true);
 
         CookieUtil.createRefreshTokenCookie(response,refreshToken);
         CookieUtil.createAccessTokenCookie(response,accessToken); // Token을 Cookie에 넣는다.
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("토큰 발급 성공");
     }
 }

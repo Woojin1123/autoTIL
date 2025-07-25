@@ -29,13 +29,12 @@ public class JwtUtil {
         long expiration = isRefreshToken ? TokenTime.REFRESH_TOKEN_EXP : TokenTime.ACCESS_TOKEN_EXP;
         long currentTimeMills = System.currentTimeMillis();
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)
                 .setIssuedAt(new Date(currentTimeMills))
                 .setExpiration(new Date(currentTimeMills + expiration))
                 .signWith(key, signatureAlgorithm)
                 .compact();
-        return isRefreshToken ? "Bearer " + token : token;
     }
 }

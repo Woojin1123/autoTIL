@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/autoTIL
+    url: jdbc:mysql://localhost:3306/autotil?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: root
   security:
