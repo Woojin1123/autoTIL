@@ -1,12 +1,9 @@
-package com.woojin.autotil.auth.service;
+package com.woojin.autotil.security.oauth;
 
-import com.woojin.autotil.auth.dto.AuthUser;
-import com.woojin.autotil.auth.dto.CustomOAuth2User;
-import com.woojin.autotil.auth.dto.GithubResponse;
-import com.woojin.autotil.auth.dto.OAuth2Response;
-import com.woojin.autotil.auth.entity.User;
-import com.woojin.autotil.auth.enums.Role;
-import com.woojin.autotil.auth.repository.UserRepository;
+import com.woojin.autotil.user.dto.AuthUser;
+import com.woojin.autotil.user.entity.User;
+import com.woojin.autotil.user.enums.Role;
+import com.woojin.autotil.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

@@ -1,4 +1,4 @@
-package com.woojin.autotil.auth.dto;
+package com.woojin.autotil.security.oauth;
 
 import java.util.Map;
 

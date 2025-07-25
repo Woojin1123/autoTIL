@@ -1,4 +1,4 @@
-package com.woojin.autotil.auth.dto;
+package com.woojin.autotil.security.oauth;
 
 public interface OAuth2Response {
     String getProvider(); // 제공자 (EX. naver, google, etc)

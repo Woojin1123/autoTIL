@@ -1,9 +1,8 @@
-package com.woojin.autotil.oauth2.handler;
+package com.woojin.autotil.security.oauth;
 
-import com.woojin.autotil.auth.dto.CustomOAuth2User;
-import com.woojin.autotil.auth.enums.Role;
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
+import com.woojin.autotil.user.enums.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +15,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // oauth2.0 로그인이 성공할 경우 응답
+public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // oauth2.0 로그인이 성공할 경우 응답
     private JwtUtil jwtUtil;
 
     @Override
@@ -30,6 +29,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtUtil.createToken(username, Role.ROLE_USER.name(), true);
 
         CookieUtil.createRefreshTokenCookie(response,refreshToken);
-        CookieUtil.createAccessTokenCookie(response,accessToken);
+        CookieUtil.createAccessTokenCookie(response,accessToken); // Token을 Cookie에 넣는다.
     }
 }

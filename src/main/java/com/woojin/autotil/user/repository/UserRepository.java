@@ -1,6 +1,6 @@
-package com.woojin.autotil.auth.repository;
+package com.woojin.autotil.user.repository;
 
-import com.woojin.autotil.auth.entity.User;
+import com.woojin.autotil.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

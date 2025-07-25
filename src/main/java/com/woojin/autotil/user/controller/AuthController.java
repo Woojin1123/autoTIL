@@ -1,4 +1,4 @@
-package com.woojin.autotil.auth.controller;
+package com.woojin.autotil.user.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
