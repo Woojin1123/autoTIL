@@ -18,7 +18,8 @@ import java.util.List;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String githubId;
+    private String loginId;
+    private Long githubId;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -27,9 +28,10 @@ public class User {
     private List<Til> tils = new ArrayList<>();
 
     @Builder
-    public User(Long id, String githubId, Role role){
+    public User(Long id, Long githubId, String loginId, Role role){
         this.id = id;
         this.githubId = githubId;
+        this.loginId = loginId;
         this.role = role;
     }
 }

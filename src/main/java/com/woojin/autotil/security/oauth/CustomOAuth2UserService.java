@@ -22,10 +22,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2Response oAuth2Response = new GithubResponse(oAuth2User.getAttributes());
 
-        User user = userRepository.findByGithubId(oAuth2Response.getUsername())
+        User user = userRepository.findByGithubId(oAuth2Response.getProviderId())
                 .orElseGet(()-> userRepository.save(
                         User.builder()
-                                .githubId(oAuth2Response.getUsername())
+                                .githubId(oAuth2Response.getProviderId())
+                                .loginId(oAuth2Response.getUsername())
                                 .role(Role.ROLE_USER)
                                 .build()
                     )
@@ -33,7 +34,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         AuthUser authUser = AuthUser.builder()
                 .id(user.getId()) // db pk
-                .loginId(user.getGithubId()) // github id
+                .loginId(user.getLoginId()) // github id
                 .role(user.getRole())
                 .build();
 

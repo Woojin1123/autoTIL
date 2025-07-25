@@ -15,13 +15,13 @@ public class GithubResponse implements OAuth2Response{
     }
 
     @Override
-    public String getProviderId() {
-        return attribute.get("id").toString();
+    public Long getProviderId() {
+        return Long.valueOf(attribute.get("id").toString());
     }
 
     @Override
     public String getEmail() {
-        return attribute.get("email").toString();
+        return null;
     }
 
     @Override
