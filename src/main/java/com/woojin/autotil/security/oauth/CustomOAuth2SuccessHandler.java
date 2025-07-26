@@ -2,7 +2,7 @@ package com.woojin.autotil.security.oauth;
 
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
-import com.woojin.autotil.user.enums.Role;
+import com.woojin.autotil.user.entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,16 +17,19 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // oauth2.0 로그인이 성공할 경우 응답
     private final JwtUtil jwtUtil;
+    private final OAuth2LoginService oAuth2LoginService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-        Long userId = customOAuth2User.getId();
-        String username = String.valueOf((customOAuth2User.getName()));
+        User loginUser = oAuth2LoginService.oAuth2Login(customOAuth2User);
 
-        String accessToken = jwtUtil.createToken(username, Role.ROLE_USER.name(), false);
-        String refreshToken = jwtUtil.createToken(username, Role.ROLE_USER.name(), true);
+        String username = loginUser.getLoginId();
+        String userRole = loginUser.getRole().name();
+
+        String accessToken = jwtUtil.createToken(username, userRole, false);
+        String refreshToken = jwtUtil.createToken(username, userRole, true);
 
         CookieUtil.createRefreshTokenCookie(response,refreshToken);
         CookieUtil.createAccessTokenCookie(response,accessToken); // Token을 Cookie에 넣는다.

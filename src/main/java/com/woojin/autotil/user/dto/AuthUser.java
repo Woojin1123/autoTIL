@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class AuthUser {
     private Long id;
-    private String loginId;
+    private String loginId; // Github ID
     private Role role;
+    private Long githubId;
 }

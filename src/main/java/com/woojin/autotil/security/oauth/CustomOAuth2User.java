@@ -1,6 +1,7 @@
 package com.woojin.autotil.security.oauth;
 
 import com.woojin.autotil.user.dto.AuthUser;
+import com.woojin.autotil.user.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
     private final AuthUser authUser;
+    private final String accessToken;
 
     @Override
     public <A> A getAttribute(String name) {
@@ -35,7 +37,21 @@ public class CustomOAuth2User implements OAuth2User {
         return authUser.getLoginId();
     }
 
-    public Long getId(){
+    public Long getId() {
         return authUser.getId();
+    }
+    public Role getRole(){
+        return authUser.getRole();
+    }
+
+    public Long getProviderId(){
+        return authUser.getGithubId();
+    }
+    public String getLoginId(){
+        return authUser.getLoginId();
+    }
+
+    public String getAccessToken() {
+        return this.accessToken;
     }
 }

@@ -20,6 +20,7 @@ public class User {
     private Long id;
     private String loginId;
     private Long githubId;
+    private String githubToken;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -28,10 +29,11 @@ public class User {
     private List<Til> tils = new ArrayList<>();
 
     @Builder
-    public User(Long id, Long githubId, String loginId, Role role){
+    public User(Long id, Long githubId, String loginId, Role role, String githubToken){
         this.id = id;
         this.githubId = githubId;
         this.loginId = loginId;
         this.role = role;
+        this.githubToken = githubToken;
     }
 }
