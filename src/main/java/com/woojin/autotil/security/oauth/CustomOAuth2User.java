@@ -1,7 +1,7 @@
 package com.woojin.autotil.security.oauth;
 
-import com.woojin.autotil.user.dto.AuthUser;
-import com.woojin.autotil.user.enums.Role;
+import com.woojin.autotil.auth.dto.AuthUser;
+import com.woojin.autotil.auth.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -2,8 +2,8 @@ package com.woojin.autotil.security.oauth;
 
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
-import com.woojin.autotil.user.entity.User;
-import com.woojin.autotil.user.service.OAuth2LoginService;
+import com.woojin.autotil.auth.entity.User;
+import com.woojin.autotil.auth.service.OAuth2LoginService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

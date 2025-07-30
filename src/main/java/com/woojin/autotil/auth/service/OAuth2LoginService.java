@@ -1,9 +1,9 @@
-package com.woojin.autotil.user.service;
+package com.woojin.autotil.auth.service;
 
 import com.woojin.autotil.security.oauth.CustomOAuth2User;
 import com.woojin.autotil.security.oauth.EncryptService;
-import com.woojin.autotil.user.entity.User;
-import com.woojin.autotil.user.repository.UserRepository;
+import com.woojin.autotil.auth.entity.User;
+import com.woojin.autotil.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

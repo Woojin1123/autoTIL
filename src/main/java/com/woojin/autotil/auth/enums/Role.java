@@ -1,4 +1,4 @@
-package com.woojin.autotil.user.enums;
+package com.woojin.autotil.auth.enums;
 
 import lombok.Getter;
 

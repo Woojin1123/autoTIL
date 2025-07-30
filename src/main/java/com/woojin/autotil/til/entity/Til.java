@@ -1,6 +1,6 @@
 package com.woojin.autotil.til.entity;
 
-import com.woojin.autotil.user.entity.User;
+import com.woojin.autotil.auth.entity.User;
 import com.woojin.autotil.repo.entity.GitRepository;
 import com.woojin.autotil.til.enums.TilStatus;
 import jakarta.persistence.*;

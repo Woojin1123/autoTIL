@@ -1,6 +1,6 @@
-package com.woojin.autotil.user.dto;
+package com.woojin.autotil.auth.dto;
 
-import com.woojin.autotil.user.enums.Role;
+import com.woojin.autotil.auth.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package com.woojin.autotil.repo.entity;
 
-import com.woojin.autotil.user.entity.User;
+import com.woojin.autotil.auth.entity.User;
 import com.woojin.autotil.til.entity.Til;
 import jakarta.persistence.*;
 import lombok.Getter;
