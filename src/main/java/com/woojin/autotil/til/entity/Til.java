@@ -15,6 +15,7 @@ public class Til {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate publishedAt;
+    private String title;
     @Column(columnDefinition = "TEXT")
     private String content;
     @Enumerated(value = EnumType.STRING)
