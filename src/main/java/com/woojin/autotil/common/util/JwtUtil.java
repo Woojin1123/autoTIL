@@ -1,12 +1,14 @@
 package com.woojin.autotil.common.util;
 
 import com.woojin.autotil.common.constant.TokenTime;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
@@ -18,6 +20,7 @@ public class JwtUtil {
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @PostConstruct
     public void init() {
@@ -25,16 +28,32 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String username, String role, Boolean isRefreshToken) {
+    public String createToken(Long githubId, String loginId, String role, Boolean isRefreshToken) {
         long expiration = isRefreshToken ? TokenTime.REFRESH_TOKEN_EXP : TokenTime.ACCESS_TOKEN_EXP;
         long currentTimeMills = System.currentTimeMillis();
 
         return Jwts.builder()
-                .claim("username", username)
+                .setSubject(String.valueOf(githubId))
+                .claim("loginId", loginId)
                 .claim("role", role)
                 .setIssuedAt(new Date(currentTimeMills))
                 .setExpiration(new Date(currentTimeMills + expiration))
                 .signWith(key, signatureAlgorithm)
                 .compact();
+    }
+
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
+        }
+        throw new RuntimeException("Token Not Found");
+    }
+
+    public Claims extractClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

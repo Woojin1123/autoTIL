@@ -3,6 +3,7 @@ package com.woojin.autotil.security.oauth;
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
 import com.woojin.autotil.user.entity.User;
+import com.woojin.autotil.user.service.OAuth2LoginService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,17 +26,18 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         User loginUser = oAuth2LoginService.oAuth2Login(customOAuth2User);
 
+        Long userId = loginUser.getGithubId();
         String username = loginUser.getLoginId();
         String userRole = loginUser.getRole().name();
 
-        String accessToken = jwtUtil.createToken(username, userRole, false);
-        String refreshToken = jwtUtil.createToken(username, userRole, true);
+        String accessToken = jwtUtil.createToken(userId, username, userRole, false);
+        String refreshToken = jwtUtil.createToken(userId, username, userRole, true);
 
-        CookieUtil.createRefreshTokenCookie(response,refreshToken);
-        CookieUtil.createAccessTokenCookie(response,accessToken); // Token을 Cookie에 넣는다.
+        CookieUtil.createRefreshTokenCookie(response, refreshToken);
+        CookieUtil.createAccessTokenCookie(response, accessToken); // Token을 Cookie에 넣는다.
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("토큰 발급 성공");
+        response.getWriter().write("OAUTH2 GIT HUB LOGIN 성공");
     }
 }

@@ -1,5 +1,7 @@
-package com.woojin.autotil.security.oauth;
+package com.woojin.autotil.user.service;
 
+import com.woojin.autotil.security.oauth.CustomOAuth2User;
+import com.woojin.autotil.security.oauth.EncryptService;
 import com.woojin.autotil.user.entity.User;
 import com.woojin.autotil.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
