@@ -26,4 +26,11 @@ public class RedisTokenService {
         String key = "RT:" + githubId;
         redisTemplate.delete(key);
     }
+
+    public String getToken(Long githubId){
+        String key = "RT:"+githubId;
+        return redisTemplate
+                .opsForValue()
+                .get(key);
+    }
 }

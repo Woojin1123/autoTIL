@@ -1,5 +1,6 @@
 package com.woojin.autotil.security.oauth;
 
+import com.woojin.autotil.auth.service.RedisTokenService;
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
 import com.woojin.autotil.auth.entity.User;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler { // oauth2.0 로그인이 성공할 경우 응답
     private final JwtUtil jwtUtil;
     private final OAuth2LoginService oAuth2LoginService;
+    private final RedisTokenService redisTokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -35,6 +37,8 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         CookieUtil.createRefreshTokenCookie(response, refreshToken);
         CookieUtil.createAccessTokenCookie(response, accessToken); // Token을 Cookie에 넣는다.
+
+        redisTokenService.saveRefreshToken(refreshToken,userId); // Token redis에 저장
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

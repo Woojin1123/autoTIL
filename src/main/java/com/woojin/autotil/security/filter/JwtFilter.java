@@ -1,15 +1,15 @@
 package com.woojin.autotil.security.filter;
 
-import com.woojin.autotil.common.util.JwtUtil;
 import com.woojin.autotil.auth.dto.AuthUser;
 import com.woojin.autotil.auth.enums.Role;
+import com.woojin.autotil.common.util.CookieUtil;
+import com.woojin.autotil.common.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String jwt = extractTokenFromCookie(request);
+        String jwt = CookieUtil.extractTokenFromCookie(request,"access_token");
 
         if (jwt != null) {
             try {
@@ -80,14 +80,5 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String extractTokenFromCookie(HttpServletRequest request) {
-        if (request.getCookies() == null) return null;
 
-        for (Cookie cookie : request.getCookies()) {
-            if ("access-token".equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
 }
