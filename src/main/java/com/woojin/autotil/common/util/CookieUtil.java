@@ -43,6 +43,7 @@ public class CookieUtil {
         response.addHeader("Set-Cookie", expiredCookie.toString());
     }
 
+
     public static void expireAccessTokenCookie(HttpServletResponse response) {
         ResponseCookie expiredCookie = ResponseCookie.from(ACCESS_TOKEN_NAME, "")
                 .httpOnly(true)
