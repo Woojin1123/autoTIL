@@ -24,7 +24,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws ServletException, IOException {
-        ApiException e = new ApiException(ErrorCode.INVALID_TOKEN);
+        ApiException e = new ApiException(ErrorCode.UNAUTHORIZED);
         response.setStatus(e.getErrorCode().getHttpStatus());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -32,4 +32,5 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         ApiResponse errorResponse = ApiResponse.failure(e);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
+
 }
