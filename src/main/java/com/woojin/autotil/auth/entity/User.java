@@ -24,9 +24,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<GitRepository> repositories = new ArrayList<>();
+    private final List<GitRepository> repositories = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Til> tils = new ArrayList<>();
+    private final List<Til> tils = new ArrayList<>();
 
     @Builder
     public User(Long id, Long githubId, String loginId, Role role, String githubToken){
