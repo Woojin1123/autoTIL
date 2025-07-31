@@ -1,19 +1,22 @@
 package com.woojin.autotil.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woojin.autotil.auth.dto.AuthUser;
 import com.woojin.autotil.auth.enums.Role;
+import com.woojin.autotil.common.enums.ErrorCode;
+import com.woojin.autotil.common.exception.ApiException;
+import com.woojin.autotil.common.response.ApiResponse;
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
@@ -59,26 +63,27 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            } catch (SecurityException | MalformedJwtException e) {
-                log.error("Invalid JWT signature", e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 JWT 서명입니다.");
+            } catch (ApiException e) {
+                log.error("JWT 검증 실패", e);
+                response.setStatus(e.getErrorCode().getHttpStatus());
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+
+                ApiResponse errorResponse = ApiResponse.failure(e);
+                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
                 return;
-            } catch (ExpiredJwtException e) {
-                log.error("Expired JWT token", e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
-                return;
-            } catch (UnsupportedJwtException e) {
-                log.error("Unsupported JWT token", e);
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
-                return;
-            } catch (Exception e) {
-                log.error("JWT 처리 실패", e);
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "JWT 토큰 처리 중 오류가 발생했습니다.");
-                return;
+            } catch (ExpiredJwtException e){
+                log.error("만료된 토큰입니다.");
+                ApiException ex = new ApiException(ErrorCode.TOKEN_EXPIRED);
+                response.setStatus(ex.getErrorCode().getHttpStatus());
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+
+                ApiResponse errorResponse = ApiResponse.failure(ex);
+                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
             }
         }
         filterChain.doFilter(request, response);
     }
-
 
 }
