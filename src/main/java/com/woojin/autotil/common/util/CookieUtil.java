@@ -1,6 +1,8 @@
 package com.woojin.autotil.common.util;
 
 import com.woojin.autotil.common.constant.TokenTime;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseCookie;
 
@@ -39,14 +41,15 @@ public class CookieUtil {
                 .build();
         response.addHeader("Set-Cookie", expiredCookie.toString());
     }
-    public static void expireAccessTokenCookie(HttpServletResponse response) {
-        ResponseCookie expiredCookie = ResponseCookie.from(ACCESS_TOKEN_NAME, "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(0)
-                .sameSite("None")
-                .build();
-        response.addHeader("Set-Cookie", expiredCookie.toString());
+
+    public static String extractTokenFromCookie(HttpServletRequest request, String tokenName) {
+        if (request.getCookies() == null) return null;
+
+        for (Cookie cookie : request.getCookies()) {
+            if (tokenName.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
