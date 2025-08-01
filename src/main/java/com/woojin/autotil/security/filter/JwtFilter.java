@@ -3,13 +3,11 @@ package com.woojin.autotil.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woojin.autotil.auth.dto.AuthUser;
 import com.woojin.autotil.auth.enums.Role;
-import com.woojin.autotil.common.enums.ErrorCode;
 import com.woojin.autotil.common.exception.ApiException;
 import com.woojin.autotil.common.response.ApiResponse;
 import com.woojin.autotil.common.util.CookieUtil;
 import com.woojin.autotil.common.util.JwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String jwt = CookieUtil.extractTokenFromCookie(request,"access_token");
+        String jwt = CookieUtil.extractTokenFromCookie(request, "access_token");
 
         if (jwt != null) {
             try {
@@ -64,24 +62,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (ApiException e) {
-                log.error("JWT 검증 실패", e);
-                response.setStatus(e.getErrorCode().getHttpStatus());
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
-                response.setCharacterEncoding("UTF-8");
+                if (!request.getRequestURI().startsWith("/api/auth/refresh")) {
+                    log.error("JWT 검증 실패", e);
+                    response.setStatus(e.getErrorCode().getHttpStatus());
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+                    response.setCharacterEncoding("UTF-8");
 
-                ApiResponse errorResponse = ApiResponse.failure(e);
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-                return;
-            } catch (ExpiredJwtException e){
-                log.error("만료된 토큰입니다.");
-                ApiException ex = new ApiException(ErrorCode.TOKEN_EXPIRED);
-                response.setStatus(ex.getErrorCode().getHttpStatus());
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
-                response.setCharacterEncoding("UTF-8");
-
-                ApiResponse errorResponse = ApiResponse.failure(ex);
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                    ApiResponse errorResponse = ApiResponse.failure(e);
+                    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                    return;
+                }
             }
+
         }
         filterChain.doFilter(request, response);
     }

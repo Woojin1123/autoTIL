@@ -6,6 +6,7 @@ import com.woojin.autotil.auth.entity.User;
 import com.woojin.autotil.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +14,7 @@ public class OAuth2LoginService {
     private final EncryptService encryptService;
     private final UserRepository userRepository;
 
+    @Transactional
     public User oAuth2Login(CustomOAuth2User user){
         String accessToken = user.getAccessToken();
         String encryptToken = encryptService.encryptToken(accessToken);

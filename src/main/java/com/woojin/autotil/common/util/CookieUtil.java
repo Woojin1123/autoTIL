@@ -24,10 +24,10 @@ public class CookieUtil {
     public static void createAccessTokenCookie(HttpServletResponse response, String accessToken) {
         ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_NAME, accessToken)
                 .httpOnly(true)
-                .secure(false)
+                // .secure(false)
                 .path("/")
                 .maxAge(TokenTime.ACCESS_TOKEN_EXP)
-                .sameSite("None")
+                .sameSite("LAX")
                 .build();
         response.addHeader("SET-COOKIE", cookie.toString());
     }
@@ -35,10 +35,10 @@ public class CookieUtil {
     public static void expireRefreshTokenCookie(HttpServletResponse response) {
         ResponseCookie expiredCookie = ResponseCookie.from(REFRESH_TOKEN_NAME, "")
                 .httpOnly(true)
-                .secure(true)
+                //.secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("None")
+                .sameSite("LAX")
                 .build();
         response.addHeader("Set-Cookie", expiredCookie.toString());
     }
@@ -47,10 +47,10 @@ public class CookieUtil {
     public static void expireAccessTokenCookie(HttpServletResponse response) {
         ResponseCookie expiredCookie = ResponseCookie.from(ACCESS_TOKEN_NAME, "")
                 .httpOnly(true)
-                .secure(true)
+                //.secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("None")
+                .sameSite("LAX")
                 .build();
         response.addHeader("Set-Cookie", expiredCookie.toString());
     }

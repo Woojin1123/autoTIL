@@ -11,7 +11,8 @@ public enum ErrorCode {
     TOKEN_EXPIRED("TOKEN_EXPIRED", "인증이 만료된 토큰입니다.", 401),
     TOKEN_NOT_FOUND("TOKEN_NOT_FOUND", "인증에 필요한 토큰을 찾을 수 없습니다.", 401),
     UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다.",401),
-    ACCESS_DENIED("ACCESS_DENIED", "권한이 없습니다.", 403);
+    ACCESS_DENIED("ACCESS_DENIED", "권한이 없습니다.", 403),
+    API_REQUEST_FAILED("API_REQUEST_FAILED","API 요청이 실패했습니다." , 500);
 
     private final String code;
     private final String message;

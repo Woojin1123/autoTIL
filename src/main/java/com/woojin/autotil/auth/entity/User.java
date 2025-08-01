@@ -36,4 +36,7 @@ public class User {
         this.role = role;
         this.githubToken = githubToken;
     }
+    public void revokedGithubToken(){
+        this.githubToken = null;
+    }
 }
