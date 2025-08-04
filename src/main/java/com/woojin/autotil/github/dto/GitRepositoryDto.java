@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,7 +21,7 @@ public class GitRepositoryDto {
     private String htmlUrl;
 
     @JsonProperty("pushed_at")
-    private ZonedDateTime pushedAt;
+    private OffsetDateTime pushedAt;
 
     @JsonProperty("private")
     private boolean _private;  // "private"는 Java 예약어라 대체

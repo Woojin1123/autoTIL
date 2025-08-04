@@ -19,6 +19,8 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,18 +50,34 @@ public class GithubService {
                 .retrieve()
                 .body(GitRepositoryDto[].class);
 
+        List<GitRepository> existRepo = githubRepository.findAllByUser(authUser);
+        Map<String, GitRepository> existByName = existRepo.stream()
+                .collect(Collectors.toMap(GitRepository::getRepoName, repo -> repo));
+
         List<GitRepository> repoEntities = Arrays.stream(response)
-                .map(gitRepositoryDto -> GitRepository.builder()
-                        .repoName(gitRepositoryDto.getName())
-                        .repoOwner(gitRepositoryDto.getOwner().getLogin())
-                        .repoUrl(gitRepositoryDto.getHtmlUrl())
-                        .user(authUser)
-                        .build())
+                .map(gitRepositoryDto ->
+                {
+                    String repoName = gitRepositoryDto.getName();
+                    if (existByName.containsKey(repoName)) {
+                        GitRepository repo = existByName.get(repoName);
+                        repo.updatePushedAt(gitRepositoryDto.getPushedAt().toLocalDateTime());
+                        return repo;
+                    } else {
+                        return GitRepository.builder()
+                                .repoName(gitRepositoryDto.getName())
+                                .repoOwner(gitRepositoryDto.getOwner().getLogin())
+                                .repoUrl(gitRepositoryDto.getHtmlUrl())
+                                .pushed_at(
+                                        gitRepositoryDto.getPushedAt().toLocalDateTime()
+                                )
+                                .user(authUser)
+                                .build();
+                    }
+                })
                 .toList();
 
-        log.debug("count = {}", repoEntities.size());
-
         List<GitRepository> savedRepo = githubRepository.saveAll(repoEntities);
+
         return savedRepo.stream()
                 .map(GithubRepoResponse::from)
                 .toList();

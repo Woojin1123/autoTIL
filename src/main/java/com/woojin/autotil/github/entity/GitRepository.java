@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class GitRepository {
     private String repoName;
     private String repoOwner;
     private String repoUrl;
+    private LocalDateTime pushedAt;
     private Boolean isTracked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,11 +32,16 @@ public class GitRepository {
     private List<Commit> commits = new ArrayList<>();
 
     @Builder
-    public GitRepository(Long id, String repoName, String repoOwner, String repoUrl, User user) {
+    public GitRepository(Long id, String repoName, String repoOwner, String repoUrl, LocalDateTime pushed_at, User user) {
         this.id = id;
         this.repoName = repoName;
         this.repoOwner = repoOwner;
         this.repoUrl = repoUrl;
+        this.pushedAt = pushed_at;
         this.user = user;
+    }
+
+    public void updatePushedAt(LocalDateTime pushedAt) {
+        this.pushedAt = pushedAt;
     }
 }
