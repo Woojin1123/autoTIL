@@ -15,18 +15,19 @@ public class OAuth2LoginService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User oAuth2Login(CustomOAuth2User user){
+    public User oAuth2Login(CustomOAuth2User user) {
         String accessToken = user.getAccessToken();
         String encryptToken = encryptService.encryptToken(accessToken);
 
-        return userRepository.findByGithubId(user.getProviderId())
-                .orElseGet(()->userRepository.save(
+        User authUser = userRepository.findByGithubId(user.getProviderId())
+                .orElseGet(() -> userRepository.save(
                         User.builder()
                                 .githubId(user.getProviderId())
                                 .loginId(user.getLoginId())
                                 .role(user.getRole())
-                                .githubToken(encryptToken)
                                 .build()
                 ));
+        authUser.updateGithubToken(encryptToken);
+        return authUser;
     }
 }

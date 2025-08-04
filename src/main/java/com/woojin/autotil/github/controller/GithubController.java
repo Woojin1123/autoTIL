@@ -20,7 +20,7 @@ public class GithubController {
 
     private final GithubService githubService;
 
-    @GetMapping("/repositories")
+    @GetMapping("/repos")
     public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getRepositories(
             @CookieValue("access_token") String accessToken
     ) {
