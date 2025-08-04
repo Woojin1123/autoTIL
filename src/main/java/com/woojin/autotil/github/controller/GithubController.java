@@ -4,6 +4,7 @@ import com.woojin.autotil.common.response.ApiResponse;
 import com.woojin.autotil.github.dto.GithubRepoResponse;
 import com.woojin.autotil.github.service.GithubService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/github")
 @RequiredArgsConstructor
@@ -24,7 +26,6 @@ public class GithubController {
     public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getRepositories(
             @CookieValue("access_token") String accessToken
     ) {
-
         return ResponseEntity.ok(
                 ApiResponse.success(
                         200,

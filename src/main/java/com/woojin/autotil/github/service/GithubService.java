@@ -12,6 +12,7 @@ import com.woojin.autotil.github.repository.GithubRepository;
 import com.woojin.autotil.security.oauth.EncryptService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestClient;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GithubService {
@@ -55,9 +57,11 @@ public class GithubService {
                         .build())
                 .toList();
 
+        log.debug("count = {}", repoEntities.size());
+
         List<GitRepository> savedRepo = githubRepository.saveAll(repoEntities);
         return savedRepo.stream()
-                .map(repo -> GithubRepoResponse.from(repo))
+                .map(GithubRepoResponse::from)
                 .toList();
     }
 }

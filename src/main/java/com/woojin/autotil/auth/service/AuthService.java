@@ -64,7 +64,7 @@ public class AuthService {
 
         redisTokenService.saveRefreshToken(newRefreshToken, user.getGithubId());
 
-        return new TokenResponse(newAccessToken, refreshToken);
+        return new TokenResponse(newAccessToken, newRefreshToken);
     }
 
     @Transactional

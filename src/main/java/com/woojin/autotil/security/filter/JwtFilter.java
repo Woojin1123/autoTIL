@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String jwt = CookieUtil.extractTokenFromCookie(request, "access_token");
-
+        log.info(jwt);
         if (jwt != null) {
             try {
                 Claims claims = jwtUtil.extractClaims(jwt);

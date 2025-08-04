@@ -1,5 +1,6 @@
 package com.woojin.autotil.security.config;
 
+import com.woojin.autotil.security.filter.JwtFilter;
 import com.woojin.autotil.security.oauth.CustomOAuth2SuccessHandler;
 import com.woojin.autotil.security.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,6 +35,10 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler))
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .build();
     }
 
