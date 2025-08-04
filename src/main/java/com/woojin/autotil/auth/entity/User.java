@@ -34,9 +34,12 @@ public class User {
         this.githubId = githubId;
         this.loginId = loginId;
         this.role = role;
-        this.githubToken = githubToken;
     }
     public void revokedGithubToken(){
         this.githubToken = null;
+    }
+
+    public void updateGithubToken(String encryptToken) {
+        this.githubToken = encryptToken;
     }
 }
