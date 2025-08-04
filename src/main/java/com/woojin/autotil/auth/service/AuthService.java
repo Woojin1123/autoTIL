@@ -11,13 +11,11 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Map;
 
 @Slf4j
@@ -32,7 +30,7 @@ public class AuthService {
     private final EncryptService encryptService;
     private final RedisTokenService redisTokenService;
     private final UserRepository userRepository;
-    private final RestTemplate restTemplate;
+    private final RestClient githubRestClient;
 
 
     public TokenResponse refresh(String refreshToken) {
@@ -81,27 +79,12 @@ public class AuthService {
 
         String decryptToken = encryptService.decryptToken(user.getGithubToken());
 
-        String url = "https://api.github.com/applications/" + clientId + "/token";
-
-        String credentials = clientId + ":" + clientSecret;
-        String encodedCredentials = Base64.getEncoder()
-                .encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Basic " + encodedCredentials);
-        headers.set("Accept", "application/vnd.github+json");
-        headers.set("X-GitHub-Api-Version", "2022-11-28");
-
-        Map<String, String> body = Map.of("access_token", decryptToken);
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                url,
-                HttpMethod.DELETE,
-                request,
-                String.class
-        );
+        githubRestClient
+                .method(HttpMethod.DELETE)
+                .uri("/applications/{clientId}/token", clientId)
+                .body(Map.of("access_token", decryptToken))
+                .retrieve()
+                .toBodilessEntity();
 
         redisTokenService.deleteRefreshToken(githubId);
         user.revokedGithubToken();

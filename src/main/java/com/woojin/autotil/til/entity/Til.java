@@ -1,7 +1,7 @@
 package com.woojin.autotil.til.entity;
 
 import com.woojin.autotil.auth.entity.User;
-import com.woojin.autotil.repo.entity.Commit;
+import com.woojin.autotil.github.entity.Commit;
 import com.woojin.autotil.til.enums.TilStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

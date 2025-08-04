@@ -1,4 +1,4 @@
-package com.woojin.autotil.repo.entity;
+package com.woojin.autotil.github.entity;
 
 import com.woojin.autotil.til.entity.Til;
 import jakarta.persistence.*;
