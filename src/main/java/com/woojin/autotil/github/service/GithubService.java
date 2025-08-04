@@ -51,19 +51,24 @@ public class GithubService {
                 .body(GitRepositoryDto[].class);
 
         List<GitRepository> existRepo = githubRepository.findAllByUser(authUser);
+
         Map<String, GitRepository> existByName = existRepo.stream()
-                .collect(Collectors.toMap(GitRepository::getRepoName, repo -> repo));
+                .collect(Collectors.toMap(
+                        repo -> repo.getGithubRepoId().toString(),
+                        repo -> repo)
+                );
 
         List<GitRepository> repoEntities = Arrays.stream(response)
                 .map(gitRepositoryDto ->
                 {
-                    String repoName = gitRepositoryDto.getName();
-                    if (existByName.containsKey(repoName)) {
-                        GitRepository repo = existByName.get(repoName);
+                    String repoId = gitRepositoryDto.getId().toString();
+                    if (existByName.containsKey(repoId)) {
+                        GitRepository repo = existByName.get(repoId);
                         repo.updatePushedAt(gitRepositoryDto.getPushedAt().toLocalDateTime());
                         return repo;
                     } else {
                         return GitRepository.builder()
+                                .githubRepoId(gitRepositoryDto.getId())
                                 .repoName(gitRepositoryDto.getName())
                                 .repoOwner(gitRepositoryDto.getOwner().getLogin())
                                 .repoUrl(gitRepositoryDto.getHtmlUrl())

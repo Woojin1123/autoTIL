@@ -9,6 +9,7 @@ import java.time.OffsetDateTime;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GitRepositoryDto {
+    private Long id;
 
     private String name;
 

@@ -18,6 +18,7 @@ public class GitRepository {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long githubRepoId;
     private String repoName;
     private String repoOwner;
     private String repoUrl;
@@ -32,8 +33,9 @@ public class GitRepository {
     private List<Commit> commits = new ArrayList<>();
 
     @Builder
-    public GitRepository(Long id, String repoName, String repoOwner, String repoUrl, LocalDateTime pushed_at, User user) {
+    public GitRepository(Long id,Long githubRepoId, String repoName, String repoOwner, String repoUrl, LocalDateTime pushed_at, User user) {
         this.id = id;
+        this.githubRepoId = githubRepoId;
         this.repoName = repoName;
         this.repoOwner = repoOwner;
         this.repoUrl = repoUrl;
