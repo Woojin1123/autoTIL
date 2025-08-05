@@ -13,7 +13,8 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND("TOKEN_NOT_FOUND", "인증에 필요한 토큰을 찾을 수 없습니다.", 401),
     UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다.", 401),
     ACCESS_DENIED("ACCESS_DENIED", "권한이 없습니다.", 403),
-    API_REQUEST_FAILED("API_REQUEST_FAILED", "API 요청이 실패했습니다.", 500);
+    API_REQUEST_FAILED("API_REQUEST_FAILED", "API 요청이 실패했습니다.", 500),
+    RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND","Resource is not found" , 404 );
 
     private final String code;
     private final String message;
