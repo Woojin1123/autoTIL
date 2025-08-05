@@ -5,6 +5,7 @@ import com.woojin.autotil.auth.repository.UserRepository;
 import com.woojin.autotil.common.enums.ErrorCode;
 import com.woojin.autotil.common.exception.ApiException;
 import com.woojin.autotil.common.util.JwtUtil;
+import com.woojin.autotil.github.dto.CommitResponse;
 import com.woojin.autotil.github.dto.GitRepositoryDto;
 import com.woojin.autotil.github.dto.GithubRepoResponse;
 import com.woojin.autotil.github.entity.GitRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -86,5 +88,10 @@ public class GithubService {
         return savedRepo.stream()
                 .map(GithubRepoResponse::from)
                 .toList();
+    }
+
+    public List<CommitResponse> getCommitsByRepo(String repoId, LocalDateTime since) {
+
+        return null;
     }
 }
