@@ -1,7 +1,25 @@
 package com.woojin.autotil.github.dto;
 
+import com.woojin.autotil.github.entity.Commit;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
+@AllArgsConstructor
 public class CommitResponse {
+    private String sha;
+    private String htmlUrl;
+    private String authorLogin;
+    private LocalDateTime committedAt;
+
+    public static CommitResponse from(Commit commit) {
+        return new CommitResponse(
+                commit.getCommitSha(),
+                commit.getHtmlUrl(),
+                commit.getHtmlUrl(),
+                commit.getCommittedAt()
+        );
+    }
 }

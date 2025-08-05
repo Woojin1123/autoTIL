@@ -48,7 +48,7 @@ public class GithubController {
 
     @GetMapping("/repos/{repoId}/commit")
     public ResponseEntity<ApiResponse<List<CommitResponse>>> getCommitsByRepo(
-            @PathVariable String repoId,
+            @PathVariable Long repoId,
             @RequestParam(required = false) LocalDateTime since
     ) {
         return ResponseEntity.ok(

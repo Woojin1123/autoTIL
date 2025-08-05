@@ -18,11 +18,10 @@ public class Commit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String commitSha;
-
     private String message;
-
+    private String authorLogin;
+    private String htmlUrl;
     private LocalDateTime committedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
