@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface GithubRepository extends JpaRepository<GitRepository,Long> {
     List<GitRepository> findAllByUser(User authUser);
+
+
+    List<GitRepository> findAllByUserIdAndGithubRepoIdIn(Long id, List<Long> repoIds);
 }
