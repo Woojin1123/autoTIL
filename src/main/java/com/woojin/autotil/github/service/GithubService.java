@@ -5,7 +5,6 @@ import com.woojin.autotil.auth.repository.UserRepository;
 import com.woojin.autotil.common.enums.ErrorCode;
 import com.woojin.autotil.common.exception.ApiException;
 import com.woojin.autotil.common.util.JwtUtil;
-import com.woojin.autotil.github.dto.CommitResponse;
 import com.woojin.autotil.github.dto.GitRepositoryDto;
 import com.woojin.autotil.github.dto.GithubRepoResponse;
 import com.woojin.autotil.github.entity.GitRepository;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +33,13 @@ public class GithubService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public List<GithubRepoResponse> getRepositories(String accessToken) {
-        Claims claims = jwtUtil.extractClaims(accessToken);
-        Long githubId = Long.valueOf(claims.getSubject());
+    public List<GithubRepoResponse> getRepositories() {
+        AuthUser principal = (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Long githubId = principal.getGithubId();
 
         User authUser = userRepository.findByGithubId(githubId).orElseThrow(() ->
                 new ApiException(ErrorCode.USER_NOT_FOUND)
@@ -87,6 +89,29 @@ public class GithubService {
 
         return savedRepo.stream()
                 .map(GithubRepoResponse::from)
+                .toList();
+    }
+
+    @Transactional
+    public List<Long> updateRepoTracked(repoTrackRequest request) {
+        AuthUser principal = (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        User authUser = userRepository.findByGithubId(principal.getGithubId()).orElseThrow(() ->
+                new ApiException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        List<GitRepository> repos = githubRepository.findAllByUserIdAndGithubRepoIdIn(authUser.getId(), request.getRepoIds());
+
+        repos.forEach(repo -> repo.updateTracked(true));
+
+        githubRepository.saveAll(repos);
+
+        return repos.stream()
+                .filter(GitRepository::getIsTracked)
+                .map(GitRepository::getId)
                 .toList();
     }
 

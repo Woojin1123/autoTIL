@@ -33,7 +33,7 @@ public class GitRepository {
     private List<Commit> commits = new ArrayList<>();
 
     @Builder
-    public GitRepository(Long id,Long githubRepoId, String repoName, String repoOwner, String repoUrl, LocalDateTime pushed_at, User user) {
+    public GitRepository(Long id, Long githubRepoId, String repoName, String repoOwner, String repoUrl, LocalDateTime pushed_at, User user) {
         this.id = id;
         this.githubRepoId = githubRepoId;
         this.repoName = repoName;
@@ -45,5 +45,9 @@ public class GitRepository {
 
     public void updatePushedAt(LocalDateTime pushedAt) {
         this.pushedAt = pushedAt;
+    }
+
+    public void updateTracked(Boolean isTracked) {
+        this.isTracked = isTracked;
     }
 }
