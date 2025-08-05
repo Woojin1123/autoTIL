@@ -50,4 +50,8 @@ public class GitRepository {
     public void updateTracked(Boolean isTracked) {
         this.isTracked = isTracked;
     }
+
+    public void addCommit(Commit newCommit) {
+        this.commits.add(newCommit);
+    }
 }

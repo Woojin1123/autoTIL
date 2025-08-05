@@ -1,6 +1,7 @@
 package com.woojin.autotil.github.service;
 
 import com.woojin.autotil.auth.entity.User;
+import com.woojin.autotil.auth.repository.UserRepository;
 import com.woojin.autotil.auth.service.AuthService;
 import com.woojin.autotil.common.enums.ErrorCode;
 import com.woojin.autotil.common.exception.ApiException;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ public class GithubService {
     private final RestClient githubRestClient;
     private final EncryptService encryptService;
     private final AuthService authService;
+    private final UserRepository userRepository;
     private final GithubRepoRepository githubRepoRepository;
     private final GithubCommitRepository githubCommitRepository;
     private final JwtUtil jwtUtil;
@@ -65,7 +68,7 @@ public class GithubService {
                         repo.updatePushedAt(gitRepositoryDto.getPushedAt().toLocalDateTime());
                         return repo;
                     } else {
-                        return GitRepository.builder()
+                        GitRepository newGitRepo = GitRepository.builder()
                                 .githubRepoId(gitRepositoryDto.getId())
                                 .repoName(gitRepositoryDto.getName())
                                 .repoOwner(gitRepositoryDto.getOwner().getLogin())
@@ -75,11 +78,14 @@ public class GithubService {
                                 )
                                 .user(authUser)
                                 .build();
+                        authUser.addGitRepo(newGitRepo);
+                        return newGitRepo;
                     }
                 })
                 .toList();
 
         List<GitRepository> savedRepo = githubRepoRepository.saveAll(repoEntities);
+        userRepository.save(authUser);
 
         return savedRepo.stream()
                 .map(GithubRepoResponse::from)
@@ -87,7 +93,7 @@ public class GithubService {
     }
 
     @Transactional
-    public List<Long> updateRepoTracked(repoTrackRequest request) {
+    public List<Long> updateRepoTracked(RepoTrackRequest request) {
         User authUser = authService.getAuthUser();
 
         List<GitRepository> repos = githubRepoRepository.findAllByUserIdAndGithubRepoIdIn(authUser.getId(), request.getRepoIds());
@@ -103,15 +109,14 @@ public class GithubService {
     }
 
     @Transactional
-    public List<CommitResponse> getCommitsByRepo(Long repoId, LocalDateTime sinceDate) {
+    public List<CommitResponse> getCommitsByRepo(Long repoId, LocalDateTime sinceDate,Long perPage, Long page) {
         User user = authService.getAuthUser();
 
-        GitRepository gitRepository = githubRepoRepository.findByIdAndUserId(repoId, user.getId()).orElseThrow(() ->
+        GitRepository gitRepo = githubRepoRepository.findByIdAndUserId(repoId, user.getId()).orElseThrow(() ->
                 new ApiException(ErrorCode.REPOSITORY_NOT_FOUND)
         );
 
         String decryptToken = encryptService.decryptToken(user.getGithubToken());
-
         /*
         since: 날짜 기준 default 7일전 커밋까지
         author: 커밋 작성자 gitRepository 연관관계 User 기준
@@ -119,23 +124,25 @@ public class GithubService {
         if (sinceDate == null) {
             sinceDate = LocalDateTime.now().minusDays(7);
         }
-        OffsetDateTime since = sinceDate.atOffset(OffsetDateTime.now().getOffset());
+        OffsetDateTime since = sinceDate.atOffset(ZoneOffset.UTC);
 
         GitCommitDto[] response = githubRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/repos/{owner}/{repo}/commits")
                         .queryParam("since", since)
-                        .queryParam("author", gitRepository.getUser().getId())
+                        .queryParam("author", gitRepo.getUser().getLoginId())
+                        .queryParam("per_page",perPage) // Default 30
+                        .queryParam("page",page) // Default 1
                         .build(
-                                gitRepository.getRepoOwner(),
-                                gitRepository.getRepoName())
+                                gitRepo.getRepoOwner(),
+                                gitRepo.getRepoName())
                 )
                 .headers(h -> h.setBearerAuth(decryptToken))
                 .retrieve()
                 .body(GitCommitDto[].class);
 
-        List<Commit> existCommit = githubCommitRepository.findAllByRepositoryId(gitRepository.getId());
+        List<Commit> existCommits = githubCommitRepository.findAllByRepositoryId(gitRepo.getId());
 
-        Map<String, Commit> existBySha = existCommit.stream()
+        Map<String, Commit> existBySha = existCommits.stream()
                 .collect(Collectors.toMap(
                         Commit::getCommitSha,
                         commit -> commit)
@@ -145,10 +152,10 @@ public class GithubService {
                 {
                     String commitSha = gitCommitDto.getSha();
                     if (existBySha.containsKey(commitSha)) {
-                        Commit commit = existBySha.get(commitSha);
-                        return commit;
+                        Commit existCommit = existBySha.get(commitSha);
+                        return existCommit;
                     } else {
-                        return Commit.builder()
+                        Commit newCommit = Commit.builder()
                                 .commitSha(gitCommitDto.getSha())
                                 .committedAt(gitCommitDto.getCommit().getAuthor()
                                         .getDate().toLocalDateTime())
@@ -157,13 +164,16 @@ public class GithubService {
                                 .htmlUrl(gitCommitDto.getHtmlUrl())
                                 .message(gitCommitDto.getCommit()
                                         .getMessage())
-                                .gitRepository(gitRepository)
+                                .gitRepository(gitRepo)
                                 .build();
+                        gitRepo.addCommit(newCommit);
+                        return newCommit;
                     }
                 })
                 .toList();
 
         List<Commit> savedCommits = githubCommitRepository.saveAll(commits);
+        githubRepoRepository.save(gitRepo);
 
         return savedCommits.stream()
                 .map(CommitResponse::from)
