@@ -46,7 +46,7 @@ public class GithubController {
                 ));
     }
 
-    @GetMapping("/repos/{repoId}/commit")
+    @GetMapping("/repos/{repoId}/commits")
     public ResponseEntity<ApiResponse<List<CommitResponse>>> getCommitsByRepo(
             @PathVariable Long repoId,
             @RequestParam(required = false) LocalDateTime since,
@@ -61,6 +61,5 @@ public class GithubController {
                         githubService.getCommitsByRepo(repoId, since, perPage, page)
                 )
         );
-
     }
 }
