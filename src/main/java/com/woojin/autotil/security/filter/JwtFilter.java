@@ -64,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch (ApiException e) {
                 if (!request.getRequestURI().startsWith("/api/auth/refresh")) {
                     log.error("JWT 검증 실패", e);
-                    response.setStatus(e.getErrorCode().getHttpStatus());
+                    response.setStatus(e.getHttpStatus().value());
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
                     response.setCharacterEncoding("UTF-8");
 

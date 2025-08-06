@@ -28,7 +28,6 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        200,
                         HttpStatus.OK,
                         "Refresh Access Token Success",
                         null
@@ -46,7 +45,6 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        205,
                         HttpStatus.RESET_CONTENT,
                         "로그아웃 성공",
                         null));
