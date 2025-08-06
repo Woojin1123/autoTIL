@@ -7,12 +7,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GithubRepoResponse {
+    private Long id;
     private String repoName;
     private String repoOwner;
     private String repoUrl;
 
     public static GithubRepoResponse from(GitRepository repo) {
         return new GithubRepoResponse(
+                repo.getId(),
                 repo.getRepoName(),
                 repo.getRepoOwner(),
                 repo.getRepoUrl()

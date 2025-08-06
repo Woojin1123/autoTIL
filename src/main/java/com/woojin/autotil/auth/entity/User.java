@@ -16,7 +16,8 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String loginId;
     private Long githubId;
@@ -29,17 +30,22 @@ public class User {
     private final List<Til> tils = new ArrayList<>();
 
     @Builder
-    public User(Long id, Long githubId, String loginId, Role role, String githubToken){
+    public User(Long id, Long githubId, String loginId, Role role, String githubToken) {
         this.id = id;
         this.githubId = githubId;
         this.loginId = loginId;
         this.role = role;
     }
-    public void revokedGithubToken(){
+
+    public void revokedGithubToken() {
         this.githubToken = null;
     }
 
     public void updateGithubToken(String encryptToken) {
         this.githubToken = encryptToken;
+    }
+
+    public void addGitRepo(GitRepository newGitRepo) {
+        this.repositories.add(newGitRepo);
     }
 }

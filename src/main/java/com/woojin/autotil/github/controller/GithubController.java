@@ -1,8 +1,9 @@
 package com.woojin.autotil.github.controller;
 
 import com.woojin.autotil.common.response.ApiResponse;
+import com.woojin.autotil.github.dto.CommitResponse;
 import com.woojin.autotil.github.dto.GithubRepoResponse;
-import com.woojin.autotil.github.dto.repoTrackRequest;
+import com.woojin.autotil.github.dto.RepoTrackRequest;
 import com.woojin.autotil.github.service.GithubService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -33,7 +35,7 @@ public class GithubController {
 
     @PatchMapping("/repos")
     public ResponseEntity<ApiResponse<List<Long>>> updateRepoTracked(
-            @RequestBody repoTrackRequest request
+            @RequestBody RepoTrackRequest request
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success(
@@ -44,4 +46,21 @@ public class GithubController {
                 ));
     }
 
+    @GetMapping("/repos/{repoId}/commit")
+    public ResponseEntity<ApiResponse<List<CommitResponse>>> getCommitsByRepo(
+            @PathVariable Long repoId,
+            @RequestParam(required = false) LocalDateTime since,
+            @RequestParam(required = false) Long perPage,
+            @RequestParam(required = false) Long page
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        200,
+                        HttpStatus.OK,
+                        "커밋 리스트 조회 성공",
+                        githubService.getCommitsByRepo(repoId, since, perPage, page)
+                )
+        );
+
+    }
 }

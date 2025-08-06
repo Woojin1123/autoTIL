@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
@@ -20,7 +21,7 @@ public class RestClientConfig {
     public RestClient githubRestClient(
             @Value("${GITHUB_CLIENT_SECRET}") String clientSecret,
             @Value("${GITHUB_CLIENT_ID}") String clientId
-    ){
+    ) {
         String credentials = clientId + ":" + clientSecret;
         String encoded = Base64.getEncoder()
                 .encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
@@ -31,15 +32,26 @@ public class RestClientConfig {
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoded)
                 .defaultHeader(HttpHeaders.ACCEPT, "application/vnd.github+json")
                 .defaultHeader("X-GitHub-Api-Version", "2022-11-28")
+                // 404 에러 : 해당하는 자원이 없을 경우
+                .defaultStatusHandler(
+                        httpStatusCode -> httpStatusCode == HttpStatus.NOT_FOUND,
+                        (request, response) -> {
+                            throw new ApiException(ErrorCode.RESOURCE_NOT_FOUND);
+                        }
+                )
                 // 4xx 에러: 토큰이 유효하지 않을 때
                 .defaultStatusHandler(
                         HttpStatusCode::is4xxClientError,
-                        (request, response) -> { throw new ApiException(ErrorCode.INVALID_TOKEN); }
+                        (request, response) -> {
+                            throw new ApiException(ErrorCode.INVALID_TOKEN);
+                        }
                 )
                 // 5xx 에러: GitHub 서버 오류 등
                 .defaultStatusHandler(
                         HttpStatusCode::is5xxServerError,
-                        (request, response) -> { throw new ApiException(ErrorCode.API_REQUEST_FAILED); }
+                        (request, response) -> {
+                            throw new ApiException(ErrorCode.API_REQUEST_FAILED);
+                        }
                 )
                 .build();
     }

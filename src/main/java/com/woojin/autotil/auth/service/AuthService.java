@@ -1,5 +1,6 @@
 package com.woojin.autotil.auth.service;
 
+import com.woojin.autotil.auth.dto.AuthUser;
 import com.woojin.autotil.auth.dto.TokenResponse;
 import com.woojin.autotil.auth.entity.User;
 import com.woojin.autotil.auth.repository.UserRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -89,5 +91,16 @@ public class AuthService {
         redisTokenService.deleteRefreshToken(githubId);
         user.revokedGithubToken();
         userRepository.save(user);
+    }
+
+    public User getAuthUser(){
+        AuthUser principal = (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        return userRepository.findByGithubId(principal.getGithubId()).orElseThrow(() ->
+                new ApiException(ErrorCode.USER_NOT_FOUND)
+        );
     }
 }
