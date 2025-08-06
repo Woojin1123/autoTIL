@@ -13,13 +13,15 @@ public class CommitResponse {
     private String htmlUrl;
     private String authorLogin;
     private LocalDateTime committedAt;
+    private String message;
 
     public static CommitResponse from(Commit commit) {
         return new CommitResponse(
                 commit.getCommitSha(),
                 commit.getHtmlUrl(),
                 commit.getHtmlUrl(),
-                commit.getCommittedAt()
+                commit.getCommittedAt(),
+                commit.getMessage()
         );
     }
 }
