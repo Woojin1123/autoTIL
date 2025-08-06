@@ -2,13 +2,18 @@ package com.woojin.autotil.common.exception;
 
 import com.woojin.autotil.common.enums.ErrorCode;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class ApiException extends RuntimeException {
-    private ErrorCode errorCode;
+    private final HttpStatus httpStatus;
 
     public ApiException(ErrorCode errorCode) {
         super(errorCode.getMessage());
-        this.errorCode = errorCode;
+        this.httpStatus = errorCode.getHttpStatus();
+    }
+    public ApiException(ErrorCode errorCode, String entityName){
+        super(String.format(errorCode.getMessage(),entityName));
+        this.httpStatus = errorCode.getHttpStatus();
     }
 }
