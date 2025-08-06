@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface GithubCommitRepository extends JpaRepository<Commit, Long> {
-    List<Commit> findAllByRepositoryId(Long id);
+    List<Commit> findAllByGitRepositoryId(Long id);
 }

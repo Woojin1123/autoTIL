@@ -14,7 +14,9 @@ public enum ErrorCode {
     UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다.", 401),
     ACCESS_DENIED("ACCESS_DENIED", "권한이 없습니다.", 403),
     API_REQUEST_FAILED("API_REQUEST_FAILED", "API 요청이 실패했습니다.", 500),
-    RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND","Resource is not found" , 404 );
+    RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "Resource is not found", 404),
+    BAD_REQUEST("BAD_REQUEST", "잘못된 요청입니다.", 400);
+
 
     private final String code;
     private final String message;

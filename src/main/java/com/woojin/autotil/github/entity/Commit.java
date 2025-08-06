@@ -25,7 +25,7 @@ public class Commit {
     private LocalDateTime committedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "til_id", nullable = false)
+    @JoinColumn(name = "til_id")
     private Til til;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repository_id")

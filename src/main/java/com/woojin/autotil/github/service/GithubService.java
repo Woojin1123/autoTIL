@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -124,11 +122,11 @@ public class GithubService {
         if (sinceDate == null) {
             sinceDate = LocalDateTime.now().minusDays(7);
         }
-        OffsetDateTime since = sinceDate.atOffset(ZoneOffset.UTC);
+        //OffsetDateTime since = sinceDate.atOffset(ZoneOffset.UTC);
 
         GitCommitDto[] response = githubRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/repos/{owner}/{repo}/commits")
-                        .queryParam("since", since)
+          //              .queryParam("since", since)
                         .queryParam("author", gitRepo.getUser().getLoginId())
                         .queryParam("per_page",perPage) // Default 30
                         .queryParam("page",page) // Default 1
@@ -139,8 +137,8 @@ public class GithubService {
                 .headers(h -> h.setBearerAuth(decryptToken))
                 .retrieve()
                 .body(GitCommitDto[].class);
-
-        List<Commit> existCommits = githubCommitRepository.findAllByRepositoryId(gitRepo.getId());
+        log.info("GitHub API 응답 크기: {}", response.length);
+        List<Commit> existCommits = githubCommitRepository.findAllByGitRepositoryId(gitRepo.getId());
 
         Map<String, Commit> existBySha = existCommits.stream()
                 .collect(Collectors.toMap(
