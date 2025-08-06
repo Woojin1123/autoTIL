@@ -1,6 +1,7 @@
 package com.woojin.autotil.github.controller;
 
 import com.woojin.autotil.common.response.ApiResponse;
+import com.woojin.autotil.github.dto.CommitDiffResponse;
 import com.woojin.autotil.github.dto.CommitResponse;
 import com.woojin.autotil.github.dto.GithubRepoResponse;
 import com.woojin.autotil.github.dto.RepoTrackRequest;
@@ -26,7 +27,6 @@ public class GithubController {
     public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getRepositories() {
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        200,
                         HttpStatus.OK,
                         "레포지토리 로딩 성공",
                         githubService.getRepositories()
@@ -39,26 +39,37 @@ public class GithubController {
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        200,
                         HttpStatus.OK,
                         "레포지토리 업데이트 성공",
                         githubService.updateRepoTracked(request)
                 ));
     }
 
-    @GetMapping("/repos/{repoId}/commits")
+    @GetMapping("/repos/{repoName}/commits")
     public ResponseEntity<ApiResponse<List<CommitResponse>>> getCommitsByRepo(
-            @PathVariable Long repoId,
+            @PathVariable String repoName,
             @RequestParam(required = false) LocalDateTime since,
             @RequestParam(required = false) Long perPage,
             @RequestParam(required = false) Long page
     ) {
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        200,
                         HttpStatus.OK,
                         "커밋 리스트 조회 성공",
-                        githubService.getCommitsByRepo(repoId, since, perPage, page)
+                        githubService.getCommitsByRepo(repoName, since, perPage, page)
+                )
+        );
+    }
+
+    @GetMapping("/commits/{sha}/diff")
+    public ResponseEntity<ApiResponse<CommitDiffResponse>> getCommitDiff(
+        @PathVariable String sha
+    ){
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        HttpStatus.OK,
+                        "커밋 Diff 내역 조회 성공",
+                        githubService.getCommitDiff(sha)
                 )
         );
     }
