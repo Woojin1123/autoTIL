@@ -14,6 +14,8 @@ import com.woojin.autotil.github.repository.GithubRepoRepository;
 import com.woojin.autotil.security.oauth.EncryptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -35,6 +37,8 @@ public class GithubService {
     private final GithubRepoRepository githubRepoRepository;
     private final GithubCommitRepository githubCommitRepository;
     private final JwtUtil jwtUtil;
+
+    private static final String DIFF_MEDIA_TYPE = "application/vnd.github.diff";
 
     @Transactional
     public List<GithubRepoResponse> getRepositories() {
@@ -107,20 +111,20 @@ public class GithubService {
     }
 
     @Transactional
-    public List<CommitResponse> getCommitsByRepo(Long repoId, LocalDateTime sinceDate,Long perPage, Long page) {
+    public List<CommitResponse> getCommitsByRepo(String repoName, LocalDateTime sinceDate,Long perPage, Long page) {
         User user = authService.getAuthUser();
 
-        GitRepository gitRepo = githubRepoRepository.findByIdAndUserId(repoId, user.getId()).orElseThrow(() ->
-                new ApiException(ErrorCode.REPOSITORY_NOT_FOUND)
+        GitRepository gitRepo = githubRepoRepository.findByRepoNameAndUserId(repoName, user.getId()).orElseThrow(() ->
+                new ApiException(ErrorCode.REPO_NOT_FOUND)
         );
 
         String decryptToken = encryptService.decryptToken(user.getGithubToken());
         /*
-        since: 날짜 기준 default 7일전 커밋까지
+        since: 날짜 기준 default 30일전 커밋까지
         author: 커밋 작성자 gitRepository 연관관계 User 기준
          */
         if (sinceDate == null) {
-            sinceDate = LocalDateTime.now().minusDays(7);
+            sinceDate = LocalDateTime.now().minusDays(30);
         }
         //OffsetDateTime since = sinceDate.atOffset(ZoneOffset.UTC);
 
@@ -178,4 +182,27 @@ public class GithubService {
                 .toList();
     }
 
+    public String getCommitDiff(String sha) {
+        User authUser = authService.getAuthUser();
+
+        Commit commit = githubCommitRepository.findByCommitSha(sha).orElseThrow(()->
+                new ApiException(ErrorCode.COMMIT_NOT_FOUND)
+        );
+
+
+        String response = githubRestClient
+                .method(HttpMethod.GET)
+                .uri(
+                        "/repos/{owner}/{repo}/commits/{sha}",
+                        authUser.getLoginId(),
+                        commit.getGitRepository().getRepoName(),
+                        commit.getCommitSha()
+                )
+                .header(HttpHeaders.ACCEPT, DIFF_MEDIA_TYPE)
+                .retrieve()
+                .body(String.class);
+
+
+        return response;
+    }
 }

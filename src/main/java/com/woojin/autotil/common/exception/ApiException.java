@@ -12,8 +12,4 @@ public class ApiException extends RuntimeException {
         super(errorCode.getMessage());
         this.httpStatus = errorCode.getHttpStatus();
     }
-    public ApiException(ErrorCode errorCode, String entityName){
-        super(String.format(errorCode.getMessage(),entityName));
-        this.httpStatus = errorCode.getHttpStatus();
-    }
 }

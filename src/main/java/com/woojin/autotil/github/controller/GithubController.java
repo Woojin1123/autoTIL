@@ -1,7 +1,6 @@
 package com.woojin.autotil.github.controller;
 
 import com.woojin.autotil.common.response.ApiResponse;
-import com.woojin.autotil.github.dto.CommitDiffResponse;
 import com.woojin.autotil.github.dto.CommitResponse;
 import com.woojin.autotil.github.dto.GithubRepoResponse;
 import com.woojin.autotil.github.dto.RepoTrackRequest;
@@ -62,7 +61,7 @@ public class GithubController {
     }
 
     @GetMapping("/commits/{sha}/diff")
-    public ResponseEntity<ApiResponse<CommitDiffResponse>> getCommitDiff(
+    public ResponseEntity<ApiResponse<String>> getCommitDiff(
         @PathVariable String sha
     ){
         return ResponseEntity.ok(

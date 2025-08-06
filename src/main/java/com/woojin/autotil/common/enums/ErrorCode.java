@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-    NOT_FOUND("NOT_FOUND", "%s NOT FOUND.", HttpStatus.NOT_FOUND),
+    USER_NOT_FOUND("USER_NOT_FOUND", "USER NOT FOUND.", HttpStatus.NOT_FOUND),
+    REPO_NOT_FOUND("GITHUB_REPOSITORY_NOT_FOUND", "GITHUB REPOSITORY NOT FOUND.", HttpStatus.NOT_FOUND),
+    COMMIT_NOT_FOUND("COMMIT_NOT_FOUND", "COMMIT NOT FOUND.", HttpStatus.NOT_FOUND),
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "내부 서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_TOKEN("INVALID_TOKEN", "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED("TOKEN_EXPIRED", "인증이 만료된 토큰입니다.", HttpStatus.UNAUTHORIZED),
