@@ -1,6 +1,6 @@
-package com.woojin.autotil.github.repository;
+package com.woojin.autotil.commit.repository;
 
-import com.woojin.autotil.github.entity.Commit;
+import com.woojin.autotil.commit.entity.Commit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

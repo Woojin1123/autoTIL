@@ -1,10 +1,9 @@
 package com.woojin.autotil.github.controller;
 
+import com.woojin.autotil.commit.dto.CommitResponse;
 import com.woojin.autotil.common.response.ApiResponse;
-import com.woojin.autotil.github.dto.CommitResponse;
-import com.woojin.autotil.github.dto.GithubRepoResponse;
-import com.woojin.autotil.github.dto.RepoTrackRequest;
 import com.woojin.autotil.github.service.GithubService;
+import com.woojin.autotil.repo.dto.GithubRepoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,24 +22,12 @@ public class GithubController {
     private final GithubService githubService;
 
     @GetMapping("/repos")
-    public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getRepositories() {
+    public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getAllRepositories() {
         return ResponseEntity.ok(
                 ApiResponse.success(
                         HttpStatus.OK,
                         "레포지토리 로딩 성공",
-                        githubService.getRepositories()
-                ));
-    }
-
-    @PatchMapping("/repos")
-    public ResponseEntity<ApiResponse<List<Long>>> updateRepoTracked(
-            @RequestBody RepoTrackRequest request
-    ) {
-        return ResponseEntity.ok(
-                ApiResponse.success(
-                        HttpStatus.OK,
-                        "레포지토리 업데이트 성공",
-                        githubService.updateRepoTracked(request)
+                        githubService.getAllRepositories()
                 ));
     }
 
@@ -62,8 +49,8 @@ public class GithubController {
 
     @GetMapping("/commits/{sha}/diff")
     public ResponseEntity<ApiResponse<String>> getCommitDiff(
-        @PathVariable String sha
-    ){
+            @PathVariable String sha
+    ) {
         return ResponseEntity.ok(
                 ApiResponse.success(
                         HttpStatus.OK,

@@ -1,6 +1,6 @@
-package com.woojin.autotil.github.dto;
+package com.woojin.autotil.repo.dto;
 
-import com.woojin.autotil.github.entity.GitRepository;
+import com.woojin.autotil.repo.entity.GitRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

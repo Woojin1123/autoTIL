@@ -3,14 +3,17 @@ package com.woojin.autotil.github.service;
 import com.woojin.autotil.auth.entity.User;
 import com.woojin.autotil.auth.repository.UserRepository;
 import com.woojin.autotil.auth.service.AuthService;
+import com.woojin.autotil.commit.dto.CommitResponse;
+import com.woojin.autotil.commit.entity.Commit;
 import com.woojin.autotil.common.enums.ErrorCode;
 import com.woojin.autotil.common.exception.ApiException;
 import com.woojin.autotil.common.util.JwtUtil;
-import com.woojin.autotil.github.dto.*;
-import com.woojin.autotil.github.entity.Commit;
-import com.woojin.autotil.github.entity.GitRepository;
-import com.woojin.autotil.github.repository.GithubCommitRepository;
-import com.woojin.autotil.github.repository.GithubRepoRepository;
+import com.woojin.autotil.github.dto.GitCommitDto;
+import com.woojin.autotil.github.dto.GitRepositoryDto;
+import com.woojin.autotil.commit.repository.GithubCommitRepository;
+import com.woojin.autotil.repo.repository.GithubRepoRepository;
+import com.woojin.autotil.repo.dto.GithubRepoResponse;
+import com.woojin.autotil.repo.entity.GitRepository;
 import com.woojin.autotil.security.oauth.EncryptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +44,7 @@ public class GithubService {
     private static final String DIFF_MEDIA_TYPE = "application/vnd.github.diff";
 
     @Transactional
-    public List<GithubRepoResponse> getRepositories() {
+    public List<GithubRepoResponse> getAllRepositories() {
         User authUser = authService.getAuthUser();
 
         String decryptToken = encryptService.decryptToken(authUser.getGithubToken());
@@ -95,23 +98,7 @@ public class GithubService {
     }
 
     @Transactional
-    public List<Long> updateRepoTracked(RepoTrackRequest request) {
-        User authUser = authService.getAuthUser();
-
-        List<GitRepository> repos = githubRepoRepository.findAllByUserIdAndGithubRepoIdIn(authUser.getId(), request.getRepoIds());
-
-        repos.forEach(repo -> repo.updateTracked(true));
-
-        githubRepoRepository.saveAll(repos);
-
-        return repos.stream()
-                .filter(GitRepository::getIsTracked)
-                .map(GitRepository::getId)
-                .toList();
-    }
-
-    @Transactional
-    public List<CommitResponse> getCommitsByRepo(String repoName, LocalDateTime sinceDate,Long perPage, Long page) {
+    public List<CommitResponse> getCommitsByRepo(String repoName, LocalDateTime sinceDate, Long perPage, Long page) {
         User user = authService.getAuthUser();
 
         GitRepository gitRepo = githubRepoRepository.findByRepoNameAndUserId(repoName, user.getId()).orElseThrow(() ->

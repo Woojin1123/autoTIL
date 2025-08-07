@@ -1,7 +1,7 @@
-package com.woojin.autotil.github.repository;
+package com.woojin.autotil.repo.repository;
 
 import com.woojin.autotil.auth.entity.User;
-import com.woojin.autotil.github.entity.GitRepository;
+import com.woojin.autotil.repo.entity.GitRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

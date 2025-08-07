@@ -1,4 +1,4 @@
-package com.woojin.autotil.github.dto;
+package com.woojin.autotil.commit.dto;
 
 import lombok.Getter;
 
