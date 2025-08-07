@@ -32,7 +32,12 @@ public class RepoController {
     }
 
     @GetMapping("/repos/tracking")
-    public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getTrackedRepo() {
-        return ResponseEntity.ok().body(null);
+    public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getTrackingRepo() {
+        return ResponseEntity.ok().body(ApiResponse.success(
+                HttpStatus.OK,
+                "추적 중인 레포 조회 성공",
+                repoService.getTrackingRepo()
+                )
+        );
     }
 }

@@ -2,6 +2,7 @@ package com.woojin.autotil.repo.service;
 
 import com.woojin.autotil.auth.entity.User;
 import com.woojin.autotil.auth.service.AuthService;
+import com.woojin.autotil.repo.dto.GithubRepoResponse;
 import com.woojin.autotil.repo.dto.RepoTrackRequest;
 import com.woojin.autotil.repo.entity.GitRepository;
 import com.woojin.autotil.repo.repository.GithubRepoRepository;
@@ -30,6 +31,15 @@ public class RepoService {
         return repos.stream()
                 .filter(GitRepository::getIsTracked)
                 .map(GitRepository::getId)
+                .toList();
+    }
+
+    @Transactional
+    public List<GithubRepoResponse> getTrackingRepo() {
+        List<GitRepository> gitRepositories = githubRepoRepository.findAllByIsTrackedTrue();
+
+        return gitRepositories.stream()
+                .map(GithubRepoResponse::from)
                 .toList();
     }
 }
