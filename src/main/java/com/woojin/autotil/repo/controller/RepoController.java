@@ -7,19 +7,17 @@ import com.woojin.autotil.repo.service.RepoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/repos")
 public class RepoController {
     private final RepoService repoService;
 
-    @PatchMapping("/repos")
+    @PatchMapping
     public ResponseEntity<ApiResponse<List<Long>>> updateRepoTracked(
             @RequestBody RepoTrackRequest request
     ) {
@@ -31,7 +29,7 @@ public class RepoController {
                 ));
     }
 
-    @GetMapping("/repos/tracking")
+    @GetMapping("/tracking")
     public ResponseEntity<ApiResponse<List<GithubRepoResponse>>> getTrackingRepo() {
         return ResponseEntity.ok().body(ApiResponse.success(
                 HttpStatus.OK,
