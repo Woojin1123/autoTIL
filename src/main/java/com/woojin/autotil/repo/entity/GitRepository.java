@@ -1,6 +1,7 @@
-package com.woojin.autotil.github.entity;
+package com.woojin.autotil.repo.entity;
 
 import com.woojin.autotil.auth.entity.User;
+import com.woojin.autotil.commit.entity.Commit;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
